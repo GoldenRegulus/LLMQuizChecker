@@ -9,7 +9,7 @@ from PIL import Image
 
 load_dotenv()
 
-DEBUG = True
+DEBUG = False
 
 if 'GOOGLE_API_KEY' in os.environ:
     genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
@@ -79,7 +79,7 @@ model = genai.GenerativeModel(model_name='gemini-2.0-flash-exp', safety_settings
 
 # master_path = easygui.fileopenbox('Please upload master key', filetypes=['*.csv', 'CSV files'])
 # converter = DocumentConverter()
-file_paths = easygui.fileopenbox('Please upload student response', filetypes=[['*.png', '*.jpg', 'Images'], ['*.doc', '*.docx', 'Word Files'], ['*.pdf', 'PDF Files']], multiple=True)
+file_paths = easygui.fileopenbox('Please upload student response', filetypes=[['*.png', '*.jpg', 'Images']], multiple=True)
 results = []
 for file in tqdm([i for i in file_paths if str(i).endswith(('.png', '.jpg'))]):
     # uploaded_files.append(genai.upload_file(file))
@@ -111,32 +111,41 @@ def argmax(a, key=None):
 def print_qa(json):
     json = sorted(json, key=lambda x: x['question_number'])
     for result in json:
+        print(f'{result['question_number']}. {result['question_contents']}')
         if result['question_type'] == 'Multiple Choice':
-            print(result['question_number'], result['options'][argmax(result['options'], key=lambda x: x['marked'])]['content'])
+            marked_options = [(i, option) for i, option in enumerate(result['options']) if option['option_state'] not in ['Empty', 'Unknown']]
+            if marked_options:
+                for (number, option) in marked_options:
+                    print(f'  {number + 1}. [{option['option_state']}] {option['option_contents']}')
+                print(f'{len(marked_options)} option(s) selected')
+            else:
+                print("No option selected")
+        elif result['question_type'] == 'True/False':
+            print(result['boolean_answer'])
         else:
-            print(result['question_number'], result['boolean_answer']['boolean_value'])
+            print(result['question_number'], "Unknown question type")
+        print()
 
-# print_qa(final_json)
+print_qa(final_json)
 
-# answers = dict([(i['question_number'], argmax(list(map(lambda x: x['marked'], i['options']))) + 1) for i in res_json])
+with open('output.json', 'w') as f:
+    json.dump(final_json, f, indent=4)
 
-# if DEBUG:
-#     print('\nDEBUG: Student Answers')
-#     pprint(answers)
-
-# with open(master_path, 'r') as f:
-#     # print([k for line in f.readlines() for k in line.strip().split(',')])
-#     rubric = dict([(int(line.strip().split(',')[0]), (int(line.strip().split(',')[1]), int(line.strip().split(',')[2]))) for line in f.readlines()])
-
-# if DEBUG:
-#     print('\nDEBUG: Rubric')
-#     pprint(rubric)
-
-# total = 0
-# for (q, (a, m)) in rubric.items():
-#     if q in answers:
-#         total += m * (a == answers[q])
-
-# print(f'Total: {total}/{sum([i[1] for i in rubric.values()])}')
-
+with open('output.txt', 'w') as f:
+    json_sorted = sorted(final_json, key=lambda x: x['question_number'])
+    for result in json_sorted:
+        f.write(f'{result['question_number']}. {result['question_contents']}\n')
+        if result['question_type'] == 'Multiple Choice':
+            marked_options = [(i, option) for i, option in enumerate(result['options']) if option['option_state'] not in ['Empty', 'Unknown']]
+            if marked_options:
+                for (number, option) in marked_options:
+                    f.write(f'  {number + 1}. [{option['option_state']}] {option['option_contents']}\n')
+                f.write(f'{len(marked_options)} option(s) selected\n')
+            else:
+                f.write("No option selected\n")
+        elif result['question_type'] == 'True/False':
+            f.write(f'{result['boolean_answer']}\n')
+        else:
+            f.write(f'{result['question_number']} Unknown question type\n')
+        f.write('\n')
 

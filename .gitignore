@@ -12,3 +12,4 @@ wheels/
 .others
 uv.lock
 *.env
+output.*
