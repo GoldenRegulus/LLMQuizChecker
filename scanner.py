@@ -117,7 +117,7 @@ def print_qa(json):
             if marked_options:
                 for (number, option) in marked_options:
                     print(f'  {number + 1}. [{option['option_state']}] {option['option_contents']}')
-                print(f'{len(marked_options)} option(s) selected')
+                print(f'[{len(marked_options)} option(s) selected]')
             else:
                 print("No option selected")
         elif result['question_type'] == 'True/False':
@@ -140,7 +140,7 @@ with open('output.txt', 'w') as f:
             if marked_options:
                 for (number, option) in marked_options:
                     f.write(f'  {number + 1}. [{option['option_state']}] {option['option_contents']}\n')
-                f.write(f'{len(marked_options)} option(s) selected\n')
+                f.write(f'[{len(marked_options)} option(s) selected]\n')
             else:
                 f.write("No option selected\n")
         elif result['question_type'] == 'True/False':
