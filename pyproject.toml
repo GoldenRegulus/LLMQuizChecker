@@ -8,5 +8,6 @@ dependencies = [
     "easygui>=0.98.3",
     "google-generativeai>=0.8.3",
     "pillow>=11.0.0",
+    "python-dotenv>=1.0.1",
     "tqdm>=4.67.1",
 ]

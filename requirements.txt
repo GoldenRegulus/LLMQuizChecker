@@ -2,3 +2,4 @@ google-generativeai
 tqdm
 easygui
 pillow
+python-dotenv

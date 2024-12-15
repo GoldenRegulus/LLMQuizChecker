@@ -3,11 +3,18 @@ from tqdm import tqdm
 import google.generativeai as genai
 import easygui
 import json
+import os
+from dotenv import load_dotenv
 from PIL import Image
+
+load_dotenv()
 
 DEBUG = True
 
-genai.configure()
+if 'GOOGLE_API_KEY' in os.environ:
+    genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
+else:
+    genai.configure()
 
 qtype = genai.protos.Schema(
     type_ = genai.protos.Type.STRING,
