@@ -1,4 +1,4 @@
-# Automated Test Grading Script
+# Automated Quiz Checking Script
 
 This script uses Google's Gemini API to analyze images of test papers and extract answers, including multiple-choice selections and true/false responses. It outputs the results in JSON and human-readable text formats.
 
