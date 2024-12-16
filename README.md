@@ -6,7 +6,8 @@ This script uses Google's Gemini API to analyze images of test papers and extrac
 
 0. **Via UV:**
    - The project contains a `pyproject.toml` file with UV installation information and a `uv.lock` file.
-   - Simply run `uv run scanner.py` to automatically install all dependencies and start the application.
+   - Skip to step 3 for setting up Google Gemini API Keys.
+   - Run `uv run scanner.py` to automatically install all dependencies and start the application.
 
 1. **Python and Pip:**
    - Ensure you have Python 3.12 or higher installed. You can download it from [python.org](https://www.python.org/downloads/).
